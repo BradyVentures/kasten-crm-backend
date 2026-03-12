@@ -2,10 +2,13 @@ import { z } from 'zod';
 
 export const createServiceSchema = z.object({
   name: z.string().min(1, 'Name erforderlich'),
+  short_description: z.string().optional(),
   description: z.string().optional(),
+  includes: z.string().optional(),
   base_price: z.number().min(0),
   price_model: z.enum(['einmalig', 'monatlich']),
   type: z.enum(['paket', 'addon']),
+  category: z.string().optional(),
   sort_order: z.number().int().optional(),
   commission_rate: z.number().min(0).max(100).optional(),
 });

@@ -10,18 +10,21 @@ export async function getAll(includeInactive = false) {
 
 export async function create(data: {
   name: string;
+  short_description?: string;
   description?: string;
+  includes?: string;
   base_price: number;
   price_model: string;
   type: string;
+  category?: string;
   sort_order?: number;
   commission_rate?: number;
 }) {
   const result = await db.query(
-    `INSERT INTO services (name, description, base_price, price_model, type, sort_order, commission_rate)
-     VALUES ($1, $2, $3, $4, $5::service_type, $6, $7)
+    `INSERT INTO services (name, short_description, description, includes, base_price, price_model, type, category, sort_order, commission_rate)
+     VALUES ($1, $2, $3, $4, $5, $6, $7::service_type, $8, $9, $10)
      RETURNING *`,
-    [data.name, data.description || null, data.base_price, data.price_model, data.type, data.sort_order || 0, data.commission_rate || 0]
+    [data.name, data.short_description || null, data.description || null, data.includes || null, data.base_price, data.price_model, data.type, data.category || null, data.sort_order || 0, data.commission_rate || 0]
   );
   return result.rows[0];
 }

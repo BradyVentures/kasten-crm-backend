@@ -1,7 +1,18 @@
 import { Response } from 'express';
 import { AuthRequest } from '../types/index.js';
 import * as customersService from '../services/customers.service.js';
-import { updateCustomerSchema, assignServiceSchema } from '../validators/customers.schema.js';
+import { createCustomerSchema, updateCustomerSchema, assignServiceSchema } from '../validators/customers.schema.js';
+
+export async function create(req: AuthRequest, res: Response) {
+  try {
+    const parsed = createCustomerSchema.safeParse(req.body);
+    if (!parsed.success) { res.status(400).json({ error: parsed.error.errors[0].message }); return; }
+    const customer = await customersService.create(parsed.data, req.user!.id);
+    res.status(201).json(customer);
+  } catch {
+    res.status(500).json({ error: 'Fehler beim Erstellen des Kunden' });
+  }
+}
 
 export async function getAll(req: AuthRequest, res: Response) {
   try {

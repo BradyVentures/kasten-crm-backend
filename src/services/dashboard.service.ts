@@ -61,9 +61,13 @@ export async function getCommissions(filters: {
   const where = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
 
   const details = await db.query(
-    `SELECT cs.id, cs.sold_price, cs.sold_date, cs.price_model,
+    `SELECT cs.id, cs.sold_price, cs.sold_date, cs.price_model, cs.contract_months,
             s.name as service_name, s.commission_rate,
-            ROUND(cs.sold_price * s.commission_rate / 100, 2) as commission_amount,
+            CASE
+              WHEN cs.price_model = 'monatlich' AND cs.contract_months IS NOT NULL
+              THEN ROUND(cs.sold_price * cs.contract_months * s.commission_rate / 100, 2)
+              ELSE ROUND(cs.sold_price * s.commission_rate / 100, 2)
+            END as commission_amount,
             c.company_name as customer_name,
             u.name as employee_name, u.id as employee_id
      FROM customer_services cs
@@ -79,7 +83,13 @@ export async function getCommissions(filters: {
     `SELECT u.id as employee_id, u.name as employee_name,
             COUNT(cs.id)::int as total_sales,
             COALESCE(SUM(cs.sold_price), 0)::numeric as total_revenue,
-            COALESCE(SUM(ROUND(cs.sold_price * s.commission_rate / 100, 2)), 0)::numeric as total_commission
+            COALESCE(SUM(
+              CASE
+                WHEN cs.price_model = 'monatlich' AND cs.contract_months IS NOT NULL
+                THEN ROUND(cs.sold_price * cs.contract_months * s.commission_rate / 100, 2)
+                ELSE ROUND(cs.sold_price * s.commission_rate / 100, 2)
+              END
+            ), 0)::numeric as total_commission
      FROM users u
      LEFT JOIN customer_services cs ON cs.sold_by = u.id
      LEFT JOIN services s ON cs.service_id = s.id

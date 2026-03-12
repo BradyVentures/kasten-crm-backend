@@ -36,6 +36,39 @@ export async function getAll(filters: { search?: string; page?: number; per_page
   return { customers: result.rows, total, page, per_page: perPage };
 }
 
+export async function create(data: {
+  company_name: string;
+  contact_person?: string;
+  email?: string;
+  phone?: string;
+  website?: string;
+  address?: string;
+  city?: string;
+  postal_code?: string;
+  notes?: string;
+  assigned_to?: string;
+}, userId: string) {
+  const result = await db.query(
+    `INSERT INTO customers (company_name, contact_person, email, phone, website, address, city, postal_code, notes, assigned_to, converted_by)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+     RETURNING *`,
+    [
+      data.company_name,
+      data.contact_person || null,
+      data.email || null,
+      data.phone || null,
+      data.website || null,
+      data.address || null,
+      data.city || null,
+      data.postal_code || null,
+      data.notes || null,
+      data.assigned_to || null,
+      userId,
+    ]
+  );
+  return result.rows[0];
+}
+
 export async function getById(id: string) {
   const result = await db.query(
     `SELECT c.*, u.name as assigned_to_name
@@ -49,7 +82,11 @@ export async function getById(id: string) {
 
   const services = await db.query(
     `SELECT cs.*, s.name as service_name, s.type as service_type, s.commission_rate,
-            ROUND(cs.sold_price * s.commission_rate / 100, 2) as commission_amount,
+            CASE
+              WHEN cs.price_model = 'monatlich' AND cs.contract_months IS NOT NULL
+              THEN ROUND(cs.sold_price * cs.contract_months * s.commission_rate / 100, 2)
+              ELSE ROUND(cs.sold_price * s.commission_rate / 100, 2)
+            END as commission_amount,
             u.name as sold_by_name
      FROM customer_services cs
      JOIN services s ON cs.service_id = s.id
@@ -91,14 +128,16 @@ export async function assignService(customerId: string, data: {
   service_id: string;
   sold_price: number;
   price_model: string;
+  contract_months?: number;
   sold_date?: string;
   notes?: string;
 }, userId: string) {
   const result = await db.query(
-    `INSERT INTO customer_services (customer_id, service_id, sold_price, price_model, sold_date, sold_by, notes)
-     VALUES ($1, $2, $3, $4, $5, $6, $7)
+    `INSERT INTO customer_services (customer_id, service_id, sold_price, price_model, contract_months, sold_date, sold_by, notes)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
      RETURNING *`,
     [customerId, data.service_id, data.sold_price, data.price_model,
+     data.contract_months || null,
      data.sold_date || new Date().toISOString().split('T')[0], userId, data.notes || null]
   );
   return result.rows[0];

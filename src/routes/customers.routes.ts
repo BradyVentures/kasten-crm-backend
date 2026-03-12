@@ -6,6 +6,7 @@ const router = Router();
 
 router.use(authenticate);
 
+router.post('/', customersController.create);
 router.get('/', customersController.getAll);
 router.get('/:id', customersController.getById);
 router.put('/:id', customersController.update);
