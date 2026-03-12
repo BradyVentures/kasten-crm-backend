@@ -7,6 +7,7 @@ import usersRoutes from './users.routes.js';
 import dashboardRoutes from './dashboard.routes.js';
 import documentsRoutes from './documents.routes.js';
 import infoPagesRoutes from './info-pages.routes.js';
+import regionsRoutes from './regions.routes.js';
 
 const router = Router();
 
@@ -18,5 +19,6 @@ router.use('/users', usersRoutes);
 router.use('/dashboard', dashboardRoutes);
 router.use('/documents', documentsRoutes);
 router.use('/info-pages', infoPagesRoutes);
+router.use('/regions', regionsRoutes);
 
 export default router;

@@ -16,6 +16,7 @@ export async function getAll(req: AuthRequest, res: Response) {
       search: req.query.search as string,
       bundesland: req.query.bundesland as string,
       missing_field: req.query.missing_field as string,
+      regions: req.query.regions as string,
       sort_by: req.query.sort_by as string,
       sort_order: req.query.sort_order as string,
       page: parseInt(req.query.page as string) || 1,
@@ -24,6 +25,21 @@ export async function getAll(req: AuthRequest, res: Response) {
     res.json(result);
   } catch {
     res.status(500).json({ error: 'Fehler beim Laden der Leads' });
+  }
+}
+
+export async function getRegionCounts(req: AuthRequest, res: Response) {
+  try {
+    const counts = await leadsService.getRegionCounts({
+      status: req.query.status as string,
+      assigned_to: req.query.assigned_to as string,
+      search: req.query.search as string,
+      bundesland: req.query.bundesland as string,
+      missing_field: req.query.missing_field as string,
+    });
+    res.json(counts);
+  } catch {
+    res.status(500).json({ error: 'Fehler beim Laden der Region-Counts' });
   }
 }
 
@@ -169,7 +185,8 @@ export async function confirmImport(req: AuthRequest, res: Response) {
 
 export async function convertToCustomer(req: AuthRequest, res: Response) {
   try {
-    const customer = await leadsService.convertToCustomer(req.params.id, req.user!.id);
+    const overrides = req.body && Object.keys(req.body).length > 0 ? req.body : undefined;
+    const customer = await leadsService.convertToCustomer(req.params.id, req.user!.id, overrides);
     res.status(201).json(customer);
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Konvertierung fehlgeschlagen';

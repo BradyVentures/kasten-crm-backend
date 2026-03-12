@@ -1,18 +1,22 @@
 import { db } from '../config/database.js';
 import { CreateLeadInput, UpdateLeadInput } from '../validators/leads.schema.js';
 import { LeadStatus } from '../types/index.js';
+import { REGIONS } from '../config/regions.js';
 
-export async function getAll(filters: {
+interface LeadFilters {
   status?: string;
   assigned_to?: string;
   search?: string;
   bundesland?: string;
   missing_field?: string;
+  regions?: string;
   sort_by?: string;
   sort_order?: string;
   page?: number;
   per_page?: number;
-}) {
+}
+
+function buildFilterConditions(filters: LeadFilters) {
   const conditions: string[] = [];
   const params: unknown[] = [];
   let paramIndex = 1;
@@ -42,7 +46,7 @@ export async function getAll(filters: {
     paramIndex++;
   }
 
-  // Filter for leads missing specific fields (also catches placeholder values like '-', 'Keine', etc.)
+  // Filter for leads missing specific fields
   if (filters.missing_field) {
     const allowedFields = ['phone', 'email', 'website', 'contact_person', 'city', 'bundesland'];
     const fields = filters.missing_field.split(',');
@@ -52,6 +56,29 @@ export async function getAll(filters: {
       }
     }
   }
+
+  // Region filter: comma-separated region IDs → OR of PLZ ranges
+  if (filters.regions) {
+    const regionIds = filters.regions.split(',');
+    const regionConditions: string[] = [];
+    for (const rid of regionIds) {
+      const region = REGIONS.find(r => r.id === rid);
+      if (region) {
+        regionConditions.push(`(l.postal_code >= $${paramIndex} AND l.postal_code <= $${paramIndex + 1})`);
+        params.push(region.plzFrom, region.plzTo);
+        paramIndex += 2;
+      }
+    }
+    if (regionConditions.length > 0) {
+      conditions.push(`(${regionConditions.join(' OR ')})`);
+    }
+  }
+
+  return { conditions, params, paramIndex };
+}
+
+export async function getAll(filters: LeadFilters) {
+  const { conditions, params, paramIndex } = buildFilterConditions(filters);
 
   const where = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
   const sortBy = ['company_name', 'status', 'created_at', 'updated_at', 'bundesland', 'city'].includes(filters.sort_by || '')
@@ -75,6 +102,21 @@ export async function getAll(filters: {
   );
 
   return { leads: result.rows, total, page, per_page: perPage };
+}
+
+export async function getRegionCounts(filters: Omit<LeadFilters, 'regions' | 'page' | 'per_page' | 'sort_by' | 'sort_order'>) {
+  const { conditions, params, paramIndex } = buildFilterConditions(filters);
+  const where = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
+
+  const counts: Record<string, number> = {};
+  for (const region of REGIONS) {
+    const result = await db.query(
+      `SELECT COUNT(*) FROM leads l ${where} ${where ? 'AND' : 'WHERE'} l.postal_code >= $${paramIndex} AND l.postal_code <= $${paramIndex + 1}`,
+      [...params, region.plzFrom, region.plzTo]
+    );
+    counts[region.id] = parseInt(result.rows[0].count, 10);
+  }
+  return counts;
 }
 
 export async function bulkDelete(ids: string[]) {
@@ -122,12 +164,12 @@ export async function getById(id: string) {
 
 export async function create(data: CreateLeadInput, userId: string) {
   const result = await db.query(
-    `INSERT INTO leads (company_name, contact_person, email, phone, website, address, city, postal_code, source, notes, created_by)
-     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+    `INSERT INTO leads (company_name, contact_person, email, phone, website, address, city, postal_code, source, notes, assigned_to, created_by)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
      RETURNING *`,
     [data.company_name, data.contact_person || null, data.email || null, data.phone || null,
      data.website || null, data.address || null, data.city || null, data.postal_code || null,
-     data.source || null, data.notes || null, userId]
+     data.source || null, data.notes || null, data.assigned_to || null, userId]
   );
 
   await logActivity(result.rows[0].id, userId, 'erstellt', 'Lead erstellt');
@@ -373,10 +415,37 @@ export async function confirmImport(importId: string, columnMapping: Record<stri
 }
 
 // Convert lead to customer
-export async function convertToCustomer(leadId: string, userId: string) {
+export interface ConvertOverrides {
+  company_name?: string;
+  contact_person?: string;
+  email?: string;
+  phone?: string;
+  website?: string;
+  address?: string;
+  city?: string;
+  postal_code?: string;
+  notes?: string;
+  assigned_to?: string | null;
+}
+
+export async function convertToCustomer(leadId: string, userId: string, overrides?: ConvertOverrides) {
   const lead = await getById(leadId);
   if (!lead) throw new Error('Lead nicht gefunden');
   if (lead.status === 'gewonnen') throw new Error('Lead wurde bereits konvertiert');
+
+  // Use overrides if provided, otherwise fall back to lead data
+  const data = {
+    company_name: overrides?.company_name || lead.company_name,
+    contact_person: overrides?.contact_person !== undefined ? overrides.contact_person : lead.contact_person,
+    email: overrides?.email !== undefined ? overrides.email : lead.email,
+    phone: overrides?.phone !== undefined ? overrides.phone : lead.phone,
+    website: overrides?.website !== undefined ? overrides.website : lead.website,
+    address: overrides?.address !== undefined ? overrides.address : lead.address,
+    city: overrides?.city !== undefined ? overrides.city : lead.city,
+    postal_code: overrides?.postal_code !== undefined ? overrides.postal_code : lead.postal_code,
+    notes: overrides?.notes !== undefined ? overrides.notes : lead.notes,
+    assigned_to: overrides?.assigned_to !== undefined ? overrides.assigned_to : lead.assigned_to,
+  };
 
   const client = await db.getClient();
   try {
@@ -386,9 +455,9 @@ export async function convertToCustomer(leadId: string, userId: string) {
       `INSERT INTO customers (lead_id, company_name, contact_person, email, phone, website, address, city, postal_code, notes, assigned_to, converted_by)
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
        RETURNING *`,
-      [leadId, lead.company_name, lead.contact_person, lead.email, lead.phone,
-       lead.website, lead.address, lead.city, lead.postal_code, lead.notes,
-       lead.assigned_to, userId]
+      [leadId, data.company_name, data.contact_person, data.email, data.phone,
+       data.website, data.address, data.city, data.postal_code, data.notes,
+       data.assigned_to, userId]
     );
 
     await client.query(

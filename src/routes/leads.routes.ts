@@ -8,6 +8,7 @@ router.use(authenticate);
 
 router.get('/', leadsController.getAll);
 router.get('/distinct-values', leadsController.getDistinctValues);
+router.get('/region-counts', leadsController.getRegionCounts);
 router.get('/locks', leadsController.getAllLocks);
 router.delete('/bulk', leadsController.bulkDelete);
 router.get('/:id', leadsController.getById);

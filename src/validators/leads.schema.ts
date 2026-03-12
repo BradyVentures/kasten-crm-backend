@@ -14,6 +14,7 @@ export const createLeadSchema = z.object({
   postal_code: z.string().optional(),
   source: z.string().optional(),
   notes: z.string().optional(),
+  assigned_to: z.string().uuid().nullable().optional(),
 });
 
 export const updateLeadSchema = createLeadSchema.partial();
