@@ -1,18 +1,9 @@
--- Info Center: editable content pages for sales team
-CREATE TABLE info_pages (
-    id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    slug            VARCHAR(100) UNIQUE NOT NULL,
-    title           VARCHAR(255) NOT NULL,
-    content         TEXT NOT NULL DEFAULT '',
-    sort_order      INTEGER NOT NULL DEFAULT 0,
-    updated_by      UUID REFERENCES users(id) ON DELETE SET NULL,
-    created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
+-- Migration 013: Fix umlauts in info_pages content (ae→ä, oe→ö, ue→ü, etc.)
 
--- Seed: Gesprächsleitfaden
-INSERT INTO info_pages (slug, title, content, sort_order) VALUES
-('gespraechsleitfaden', 'Gesprächsleitfaden', '## 1. Begrüßung & Einstieg
+-- Gesprächsleitfaden
+UPDATE info_pages SET
+  title = 'Gesprächsleitfaden',
+  content = '## 1. Begrüßung & Einstieg
 
 Hallo [Name], hier ist [Ihr Name] von Brady Digital. Vielen Dank, dass Sie sich kurz Zeit nehmen.
 
@@ -50,11 +41,13 @@ Basierend auf dem, was Sie mir erzählt haben, hätte ich da ein paar konkrete I
 - Wann wäre ein guter Zeitpunkt, um die nächsten Schritte zu besprechen?
 - Ich schicke Ihnen eine kurze Zusammenfassung per E-Mail.
 
-**Wichtig:** Immer einen konkreten nächsten Schritt vereinbaren. Nie das Gespräch offen enden lassen.', 1);
+**Wichtig:** Immer einen konkreten nächsten Schritt vereinbaren. Nie das Gespräch offen enden lassen.'
+WHERE slug = 'gespraechsleitfaden';
 
--- Seed: Einwandbehandlung
-INSERT INTO info_pages (slug, title, content, sort_order) VALUES
-('einwandbehandlung', 'Einwandbehandlung', '## Häufige Einwände und Antworten
+-- Einwandbehandlung
+UPDATE info_pages SET
+  title = 'Einwandbehandlung',
+  content = '## Häufige Einwände und Antworten
 
 ### "Das ist mir zu teuer"
 
@@ -82,11 +75,13 @@ Das ist praktisch. Kommt er denn dazu, sich regelmäßig darum zu kümmern? Onli
 
 ### "Ich bin zu beschäftigt dafür"
 
-Genau deswegen sind wir da. Wir übernehmen alles und Sie müssen sich um nichts kümmern. Einmal einrichten und dann läuft es. Sie investieren jetzt 15 Minuten und sparen danach Stunden.', 2);
+Genau deswegen sind wir da. Wir übernehmen alles und Sie müssen sich um nichts kümmern. Einmal einrichten und dann läuft es. Sie investieren jetzt 15 Minuten und sparen danach Stunden.'
+WHERE slug = 'einwandbehandlung';
 
--- Seed: FAQ
-INSERT INTO info_pages (slug, title, content, sort_order) VALUES
-('faq', 'Häufige Kundenfragen', '## Fragen die Kunden oft stellen
+-- FAQ
+UPDATE info_pages SET
+  title = 'Häufige Kundenfragen',
+  content = '## Fragen die Kunden oft stellen
 
 ### Wie lange dauert es, bis meine Website fertig ist?
 
@@ -118,4 +113,5 @@ Absolut. Wir empfehlen sogar, mit den Basics anzufangen: Website und Google-Prof
 
 ### Wie messe ich, ob sich das lohnt?
 
-Wir richten ein Analytics-Dashboard ein, das Ihnen zeigt, wie viele Besucher Ihre Website hat, woher sie kommen und welche Aktionen sie durchführen. So sehen Sie genau, was funktioniert.', 3);
+Wir richten ein Analytics-Dashboard ein, das Ihnen zeigt, wie viele Besucher Ihre Website hat, woher sie kommen und welche Aktionen sie durchführen. So sehen Sie genau, was funktioniert.'
+WHERE slug = 'faq';
