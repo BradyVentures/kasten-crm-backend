@@ -10,6 +10,7 @@ interface LeadFilters {
   bundesland?: string;
   branche?: string;
   website_status?: string;
+  phone_filter?: string;
   missing_field?: string;
   regions?: string;
   sort_by?: string;
@@ -59,6 +60,13 @@ function buildFilterConditions(filters: LeadFilters) {
     conditions.push(`l.website_status = ANY($${paramIndex}::varchar[])`);
     params.push(statuses);
     paramIndex++;
+  }
+
+  // Phone filter: vorhanden / keine
+  if (filters.phone_filter === 'vorhanden') {
+    conditions.push(`l.phone IS NOT NULL AND l.phone != '' AND LOWER(TRIM(l.phone)) NOT IN ('-', '\u2013', '\u2014', 'k.a.', 'n/a', 'keine', 'minimal', 'nur verzeichnis')`);
+  } else if (filters.phone_filter === 'keine') {
+    conditions.push(`(l.phone IS NULL OR l.phone = '' OR LOWER(TRIM(l.phone)) IN ('-', '\u2013', '\u2014', 'k.a.', 'n/a', 'keine', 'minimal', 'nur verzeichnis'))`);
   }
 
   // Filter for leads missing specific fields
