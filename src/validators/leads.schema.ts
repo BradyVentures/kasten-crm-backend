@@ -12,6 +12,7 @@ export const createLeadSchema = z.object({
   address: z.string().optional(),
   city: z.string().optional(),
   postal_code: z.string().optional(),
+  bundesland: z.string().optional(),
   source: z.string().optional(),
   notes: z.string().optional(),
   assigned_to: z.string().uuid().nullable().optional(),

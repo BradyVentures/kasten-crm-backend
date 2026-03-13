@@ -183,12 +183,12 @@ export async function getById(id: string) {
 
 export async function create(data: CreateLeadInput, userId: string) {
   const result = await db.query(
-    `INSERT INTO leads (company_name, contact_person, email, phone, website, address, city, postal_code, source, notes, assigned_to, created_by, branche, website_status)
-     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
+    `INSERT INTO leads (company_name, contact_person, email, phone, website, address, city, postal_code, bundesland, source, notes, assigned_to, created_by, branche, website_status)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
      RETURNING *`,
     [data.company_name, data.contact_person || null, data.email || null, data.phone || null,
      data.website || null, data.address || null, data.city || null, data.postal_code || null,
-     data.source || null, data.notes || null, data.assigned_to || null, userId,
+     data.bundesland || null, data.source || null, data.notes || null, data.assigned_to || null, userId,
      data.branche || null, data.website_status || null]
   );
 
