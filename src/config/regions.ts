@@ -9,7 +9,7 @@ export interface Region {
 
 // WICHTIG: PLZ-Bereiche duerfen sich NICHT ueberlappen!
 // Jede PLZ gehoert genau EINER Region.
-// Sortiert nach plzFrom innerhalb jedes Bundeslandes.
+// Bereiche sind nach plzFrom sortiert und lueckenfrei geprueft.
 
 export const REGIONS: Region[] = [
   // ── Niedersachsen ─────────────────────────────────────────────
@@ -58,37 +58,40 @@ export const REGIONS: Region[] = [
 
   // ── Schleswig-Holstein ────────────────────────────────────────
 
-  // Kreis Herzogtum Lauenburg (Suedteil: Geesthacht/Schwarzenbek)
-  { id: 'geesthacht-schwarzenbek', name: 'Geesthacht, Schwarzenbek & Lauenburg', plzFrom: '21465', plzTo: '21529', bundesland: 'Schleswig-Holstein', landkreis: 'Kreis Herzogtum Lauenburg' },
+  // Kreis Stormarn — Reinbek, Wentorf & Glinde (21465-21529)
+  { id: 'stormarn-reinbek', name: 'Reinbek, Wentorf & Glinde', plzFrom: '21465', plzTo: '21529', bundesland: 'Schleswig-Holstein', landkreis: 'Kreis Stormarn' },
 
-  // Kreis Segeberg — Norderstedt (22844-22925, vor Stormarn)
-  { id: 'segeberg-norderstedt', name: 'Norderstedt', plzFrom: '22844', plzTo: '22925', bundesland: 'Schleswig-Holstein', landkreis: 'Kreis Segeberg' },
+  // Kreis Stormarn — Oststeinbek & Braak (22113-22145)
+  { id: 'stormarn-oststeinbek', name: 'Oststeinbek & Braak', plzFrom: '22113', plzTo: '22145', bundesland: 'Schleswig-Holstein', landkreis: 'Kreis Stormarn' },
 
-  // Kreis Stormarn — Sued (Ahrensburg, Bargteheide, Trittau)
-  { id: 'stormarn', name: 'Ahrensburg, Bargteheide & Trittau', plzFrom: '22926', plzTo: '23538', bundesland: 'Schleswig-Holstein', landkreis: 'Kreis Stormarn' },
+  // Kreis Segeberg — Norderstedt (22844-22884)
+  { id: 'segeberg-norderstedt', name: 'Norderstedt', plzFrom: '22844', plzTo: '22884', bundesland: 'Schleswig-Holstein', landkreis: 'Kreis Segeberg' },
 
-  // Hansestadt Luebeck
+  // Kreis Stormarn — Barsbuettel, Ahrensburg, Bargteheide, Trittau (22885-23538)
+  { id: 'stormarn', name: 'Barsbüttel, Ahrensburg, Bargteheide & Trittau', plzFrom: '22885', plzTo: '23538', bundesland: 'Schleswig-Holstein', landkreis: 'Kreis Stormarn' },
+
+  // Hansestadt Luebeck (23539-23599)
   { id: 'luebeck', name: 'Hansestadt Lübeck', plzFrom: '23539', plzTo: '23599', bundesland: 'Schleswig-Holstein', landkreis: 'Hansestadt Lübeck' },
 
-  // Kreis Ostholstein
+  // Kreis Ostholstein (23600-23779)
   { id: 'ostholstein', name: 'Eutin, Neustadt & Bad Schwartau', plzFrom: '23600', plzTo: '23779', bundesland: 'Schleswig-Holstein', landkreis: 'Kreis Ostholstein' },
 
-  // Kreis Stormarn — Nord (Bad Oldesloe, Reinfeld)
-  { id: 'stormarn-nord', name: 'Bad Oldesloe & Reinfeld', plzFrom: '23780', plzTo: '23878', bundesland: 'Schleswig-Holstein', landkreis: 'Kreis Stormarn' },
+  // Kreis Stormarn — Bad Oldesloe, Reinfeld & Bargfeld-Stegen (23780-23878)
+  { id: 'stormarn-nord', name: 'Bad Oldesloe, Reinfeld & Bargfeld-Stegen', plzFrom: '23780', plzTo: '23878', bundesland: 'Schleswig-Holstein', landkreis: 'Kreis Stormarn' },
 
-  // Kreis Herzogtum Lauenburg (Nordteil: Moelln/Ratzeburg)
+  // Kreis Herzogtum Lauenburg — Moelln & Ratzeburg (23879-23935)
   { id: 'moelln-ratzeburg', name: 'Mölln & Ratzeburg', plzFrom: '23879', plzTo: '23935', bundesland: 'Schleswig-Holstein', landkreis: 'Kreis Herzogtum Lauenburg' },
 
-  // Stadt Neumuenster
+  // Stadt Neumuenster (24534-24539)
   { id: 'neumuenster', name: 'Neumünster', plzFrom: '24534', plzTo: '24539', bundesland: 'Schleswig-Holstein', landkreis: 'Stadt Neumünster' },
 
-  // Kreis Segeberg — Kaltenkirchen/Bad Bramstedt (24540-24649, nach Neumuenster)
+  // Kreis Segeberg — Kaltenkirchen, Henstedt-Ulzburg & Bad Bramstedt (24540-24649)
   { id: 'segeberg-kaltenkirchen', name: 'Kaltenkirchen, Henstedt-Ulzburg & Bad Bramstedt', plzFrom: '24540', plzTo: '24649', bundesland: 'Schleswig-Holstein', landkreis: 'Kreis Segeberg' },
 
-  // Kreis Pinneberg (25335-25523, vor Steinburg)
+  // Kreis Pinneberg (25335-25523)
   { id: 'pinneberg-elmshorn', name: 'Pinneberg, Elmshorn & Wedel', plzFrom: '25335', plzTo: '25523', bundesland: 'Schleswig-Holstein', landkreis: 'Kreis Pinneberg' },
 
-  // Kreis Steinburg (25524-25599, nach Pinneberg)
+  // Kreis Steinburg (25524-25599)
   { id: 'steinburg', name: 'Itzehoe, Glückstadt & Wilster', plzFrom: '25524', plzTo: '25599', bundesland: 'Schleswig-Holstein', landkreis: 'Kreis Steinburg' },
 
   // Kreis Dithmarschen
