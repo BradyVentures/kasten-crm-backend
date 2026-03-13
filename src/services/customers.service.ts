@@ -87,10 +87,12 @@ export async function getById(id: string) {
               THEN ROUND(cs.sold_price * cs.contract_months * s.commission_rate / 100, 2)
               ELSE ROUND(cs.sold_price * s.commission_rate / 100, 2)
             END as commission_amount,
-            u.name as sold_by_name
+            u.name as sold_by_name,
+            p.name as promotion_name
      FROM customer_services cs
      JOIN services s ON cs.service_id = s.id
      LEFT JOIN users u ON cs.sold_by = u.id
+     LEFT JOIN promotions p ON cs.promotion_id = p.id
      WHERE cs.customer_id = $1
      ORDER BY cs.sold_date DESC`,
     [id]
@@ -131,16 +133,68 @@ export async function assignService(customerId: string, data: {
   contract_months?: number;
   sold_date?: string;
   notes?: string;
+  promotion_id?: string;
 }, userId: string) {
-  const result = await db.query(
-    `INSERT INTO customer_services (customer_id, service_id, sold_price, price_model, contract_months, sold_date, sold_by, notes)
-     VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-     RETURNING *`,
-    [customerId, data.service_id, data.sold_price, data.price_model,
-     data.contract_months || null,
-     data.sold_date || new Date().toISOString().split('T')[0], userId, data.notes || null]
-  );
-  return result.rows[0];
+  const client = await db.getClient();
+
+  try {
+    await client.query('BEGIN');
+
+    let finalPrice = data.sold_price;
+    let originalPrice: number | null = null;
+    let discountAmount: number | null = null;
+    let promotionId: string | null = data.promotion_id || null;
+
+    if (promotionId) {
+      // Atomically validate + increment redemption counter
+      const promoResult = await client.query(
+        `UPDATE promotions
+         SET current_redemptions = current_redemptions + 1,
+             updated_at = NOW()
+         WHERE id = $1
+           AND is_active = true
+           AND (valid_from IS NULL OR valid_from <= NOW())
+           AND (valid_until IS NULL OR valid_until >= NOW())
+           AND (max_redemptions IS NULL OR current_redemptions < max_redemptions)
+         RETURNING *`,
+        [promotionId]
+      );
+
+      if (promoResult.rows.length === 0) {
+        await client.query('ROLLBACK');
+        throw new Error('Aktion ist nicht mehr gültig oder bereits ausgeschöpft');
+      }
+
+      const promo = promoResult.rows[0];
+      originalPrice = data.sold_price;
+
+      if (promo.discount_type === 'fixed') {
+        discountAmount = Math.min(promo.discount_value, data.sold_price);
+      } else {
+        discountAmount = Math.round(data.sold_price * promo.discount_value) / 100;
+      }
+
+      finalPrice = Math.max(0, Math.round((data.sold_price - discountAmount) * 100) / 100);
+    }
+
+    const result = await client.query(
+      `INSERT INTO customer_services (customer_id, service_id, sold_price, price_model, contract_months, sold_date, sold_by, notes, promotion_id, original_price, discount_amount)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+       RETURNING *`,
+      [customerId, data.service_id, finalPrice, data.price_model,
+       data.contract_months || null,
+       data.sold_date || new Date().toISOString().split('T')[0], userId, data.notes || null,
+       promotionId, originalPrice, discountAmount]
+    );
+
+    await client.query('COMMIT');
+    return result.rows[0];
+  } catch (error) {
+    await client.query('ROLLBACK');
+    throw error;
+  } finally {
+    client.release();
+  }
 }
 
 export async function removeService(customerId: string, csId: string) {

@@ -32,4 +32,5 @@ export const assignServiceSchema = z.object({
   contract_months: z.number().int().min(1).optional(),
   sold_date: z.string().optional(),
   notes: z.string().optional(),
+  promotion_id: z.string().uuid().optional(),
 });
