@@ -88,7 +88,7 @@ export async function getAll(filters: LeadFilters) {
   const { conditions, params, paramIndex } = buildFilterConditions(filters);
 
   const where = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
-  const sortBy = ['company_name', 'status', 'created_at', 'updated_at', 'bundesland', 'city'].includes(filters.sort_by || '')
+  const sortBy = ['company_name', 'status', 'created_at', 'updated_at', 'bundesland', 'city', 'branche', 'website_status', 'contact_person', 'phone', 'postal_code'].includes(filters.sort_by || '')
     ? `l.${filters.sort_by}` : 'l.created_at';
   const sortOrder = filters.sort_order === 'asc' ? 'ASC' : 'DESC';
   const page = Math.max(1, filters.page || 1);
