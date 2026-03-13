@@ -15,6 +15,8 @@ export const createLeadSchema = z.object({
   source: z.string().optional(),
   notes: z.string().optional(),
   assigned_to: z.string().uuid().nullable().optional(),
+  branche: z.string().optional(),
+  website_status: z.enum(['keine', 'veraltet', 'einfach', 'ok', 'unbekannt']).optional(),
 });
 
 export const updateLeadSchema = createLeadSchema.partial();

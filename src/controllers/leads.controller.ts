@@ -15,6 +15,7 @@ export async function getAll(req: AuthRequest, res: Response) {
       assigned_to: req.query.assigned_to as string,
       search: req.query.search as string,
       bundesland: req.query.bundesland as string,
+      branche: req.query.branche as string,
       missing_field: req.query.missing_field as string,
       regions: req.query.regions as string,
       sort_by: req.query.sort_by as string,
@@ -35,6 +36,7 @@ export async function getRegionCounts(req: AuthRequest, res: Response) {
       assigned_to: req.query.assigned_to as string,
       search: req.query.search as string,
       bundesland: req.query.bundesland as string,
+      branche: req.query.branche as string,
       missing_field: req.query.missing_field as string,
     });
     res.json(counts);

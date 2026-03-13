@@ -8,6 +8,7 @@ interface LeadFilters {
   assigned_to?: string;
   search?: string;
   bundesland?: string;
+  branche?: string;
   missing_field?: string;
   regions?: string;
   sort_by?: string;
@@ -43,6 +44,12 @@ function buildFilterConditions(filters: LeadFilters) {
   if (filters.bundesland) {
     conditions.push(`l.bundesland = $${paramIndex}`);
     params.push(filters.bundesland);
+    paramIndex++;
+  }
+
+  if (filters.branche) {
+    conditions.push(`l.branche = $${paramIndex}`);
+    params.push(filters.branche);
     paramIndex++;
   }
 
@@ -145,9 +152,13 @@ export async function getDistinctValues() {
   const cities = await db.query(
     "SELECT DISTINCT city FROM leads WHERE city IS NOT NULL AND city != '' ORDER BY city"
   );
+  const branchen = await db.query(
+    "SELECT DISTINCT branche FROM leads WHERE branche IS NOT NULL AND branche != '' ORDER BY branche"
+  );
   return {
     bundeslaender: bundeslaender.rows.map(r => r.bundesland),
     cities: cities.rows.map(r => r.city),
+    branchen: branchen.rows.map(r => r.branche),
   };
 }
 
@@ -164,12 +175,13 @@ export async function getById(id: string) {
 
 export async function create(data: CreateLeadInput, userId: string) {
   const result = await db.query(
-    `INSERT INTO leads (company_name, contact_person, email, phone, website, address, city, postal_code, source, notes, assigned_to, created_by)
-     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+    `INSERT INTO leads (company_name, contact_person, email, phone, website, address, city, postal_code, source, notes, assigned_to, created_by, branche, website_status)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
      RETURNING *`,
     [data.company_name, data.contact_person || null, data.email || null, data.phone || null,
      data.website || null, data.address || null, data.city || null, data.postal_code || null,
-     data.source || null, data.notes || null, data.assigned_to || null, userId]
+     data.source || null, data.notes || null, data.assigned_to || null, userId,
+     data.branche || null, data.website_status || null]
   );
 
   await logActivity(result.rows[0].id, userId, 'erstellt', 'Lead erstellt');
