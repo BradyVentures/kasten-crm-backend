@@ -25,17 +25,17 @@ export const REGIONS: Region[] = [
   { id: 'walsrode-fallingbostel', name: 'Walsrode & Bad Fallingbostel', plzFrom: '29664', plzTo: '29699', bundesland: 'Niedersachsen', landkreis: 'Heidekreis' },
 
   // Landkreis Luechow-Dannenberg
-  { id: 'luechow-dannenberg', name: 'L\u00fcchow, Dannenberg & Wendland', plzFrom: '29439', plzTo: '29499', bundesland: 'Niedersachsen', landkreis: 'Landkreis L\u00fcchow-Dannenberg' },
+  { id: 'luechow-dannenberg', name: 'Lüchow, Dannenberg & Wendland', plzFrom: '29439', plzTo: '29499', bundesland: 'Niedersachsen', landkreis: 'Landkreis Lüchow-Dannenberg' },
 
   // Landkreis Lueneburg
-  { id: 'lueneburg', name: 'L\u00fcneburg & Umgebung', plzFrom: '21335', plzTo: '21409', bundesland: 'Niedersachsen', landkreis: 'Landkreis L\u00fcneburg' },
+  { id: 'lueneburg', name: 'Lüneburg & Umgebung', plzFrom: '21335', plzTo: '21409', bundesland: 'Niedersachsen', landkreis: 'Landkreis Lüneburg' },
 
   // Landkreis Osterholz
   { id: 'osterholz', name: 'Osterholz-Scharmbeck, Ritterhude & Worpswede', plzFrom: '27711', plzTo: '27729', bundesland: 'Niedersachsen', landkreis: 'Landkreis Osterholz' },
 
   // Landkreis Rotenburg (Wuemme)
-  { id: 'rotenburg-suedost', name: 'Rotenburg, Schee\u00dfel & Sottrum', plzFrom: '27356', plzTo: '27389', bundesland: 'Niedersachsen', landkreis: 'Landkreis Rotenburg (W\u00fcmme)' },
-  { id: 'rotenburg-nordwest', name: 'Sittensen, Zeven & Bremerverde', plzFrom: '27404', plzTo: '27449', bundesland: 'Niedersachsen', landkreis: 'Landkreis Rotenburg (W\u00fcmme)' },
+  { id: 'rotenburg-suedost', name: 'Rotenburg, Scheeßel & Sottrum', plzFrom: '27356', plzTo: '27389', bundesland: 'Niedersachsen', landkreis: 'Landkreis Rotenburg (Wümme)' },
+  { id: 'rotenburg-nordwest', name: 'Sittensen, Zeven & Bremerverde', plzFrom: '27404', plzTo: '27449', bundesland: 'Niedersachsen', landkreis: 'Landkreis Rotenburg (Wümme)' },
 
   // Landkreis Stade
   { id: 'buxtehude-neuwulmstorf', name: 'Buxtehude & Neu Wulmstorf', plzFrom: '21614', plzTo: '21629', bundesland: 'Niedersachsen', landkreis: 'Landkreis Stade' },
@@ -55,12 +55,12 @@ export const REGIONS: Region[] = [
   // ── Schleswig-Holstein ────────────────────────────────────────
 
   // Kreis Dithmarschen
-  { id: 'dithmarschen-nord', name: 'Heide, B\u00fcsum & Wesselburen', plzFrom: '25746', plzTo: '25899', bundesland: 'Schleswig-Holstein', landkreis: 'Kreis Dithmarschen' },
-  { id: 'dithmarschen-sued', name: 'Meldorf, Brunsb\u00fcttel & Burg', plzFrom: '25693', plzTo: '25745', bundesland: 'Schleswig-Holstein', landkreis: 'Kreis Dithmarschen' },
+  { id: 'dithmarschen-nord', name: 'Heide, Büsum & Wesselburen', plzFrom: '25746', plzTo: '25899', bundesland: 'Schleswig-Holstein', landkreis: 'Kreis Dithmarschen' },
+  { id: 'dithmarschen-sued', name: 'Meldorf, Brunsbüttel & Burg', plzFrom: '25693', plzTo: '25745', bundesland: 'Schleswig-Holstein', landkreis: 'Kreis Dithmarschen' },
 
   // Kreis Herzogtum Lauenburg
   { id: 'geesthacht-schwarzenbek', name: 'Geesthacht, Schwarzenbek & Lauenburg', plzFrom: '21465', plzTo: '21529', bundesland: 'Schleswig-Holstein', landkreis: 'Kreis Herzogtum Lauenburg' },
-  { id: 'moelln-ratzeburg', name: 'M\u00f6lln & Ratzeburg', plzFrom: '23879', plzTo: '23919', bundesland: 'Schleswig-Holstein', landkreis: 'Kreis Herzogtum Lauenburg' },
+  { id: 'moelln-ratzeburg', name: 'Mölln & Ratzeburg', plzFrom: '23879', plzTo: '23919', bundesland: 'Schleswig-Holstein', landkreis: 'Kreis Herzogtum Lauenburg' },
 
   // Kreis Ostholstein
   { id: 'ostholstein', name: 'Eutin, Neustadt & Bad Schwartau', plzFrom: '23600', plzTo: '23779', bundesland: 'Schleswig-Holstein', landkreis: 'Kreis Ostholstein' },
@@ -72,21 +72,21 @@ export const REGIONS: Region[] = [
   { id: 'segeberg-kaltenkirchen', name: 'Kaltenkirchen, Norderstedt & Bad Segeberg', plzFrom: '22844', plzTo: '24649', bundesland: 'Schleswig-Holstein', landkreis: 'Kreis Segeberg' },
 
   // Kreis Steinburg
-  { id: 'steinburg', name: 'Itzehoe, Gl\u00fcckstadt & Wilster', plzFrom: '25524', plzTo: '25599', bundesland: 'Schleswig-Holstein', landkreis: 'Kreis Steinburg' },
+  { id: 'steinburg', name: 'Itzehoe, Glückstadt & Wilster', plzFrom: '25524', plzTo: '25599', bundesland: 'Schleswig-Holstein', landkreis: 'Kreis Steinburg' },
 
   // Kreis Stormarn
   { id: 'stormarn', name: 'Ahrensburg, Reinbek & Bad Oldesloe', plzFrom: '22926', plzTo: '23858', bundesland: 'Schleswig-Holstein', landkreis: 'Kreis Stormarn' },
 
-  // Hansestadt L\u00fcbeck
-  { id: 'luebeck', name: 'Hansestadt L\u00fcbeck', plzFrom: '23539', plzTo: '23570', bundesland: 'Schleswig-Holstein', landkreis: 'Hansestadt L\u00fcbeck' },
+  // Hansestadt Lübeck
+  { id: 'luebeck', name: 'Hansestadt Lübeck', plzFrom: '23539', plzTo: '23570', bundesland: 'Schleswig-Holstein', landkreis: 'Hansestadt Lübeck' },
 
-  // Stadt Neum\u00fcnster
-  { id: 'neumuenster', name: 'Neum\u00fcnster', plzFrom: '24534', plzTo: '24539', bundesland: 'Schleswig-Holstein', landkreis: 'Stadt Neum\u00fcnster' },
+  // Stadt Neumünster
+  { id: 'neumuenster', name: 'Neumünster', plzFrom: '24534', plzTo: '24539', bundesland: 'Schleswig-Holstein', landkreis: 'Stadt Neumünster' },
 
   // ── Mecklenburg-Vorpommern ────────────────────────────────────
 
   // Landkreis Nordwestmecklenburg
-  { id: 'nordwestmecklenburg', name: 'Wismar, Grevesm\u00fchlen & Sch\u00f6nberg', plzFrom: '23936', plzTo: '23999', bundesland: 'Mecklenburg-Vorpommern', landkreis: 'Landkreis Nordwestmecklenburg' },
+  { id: 'nordwestmecklenburg', name: 'Wismar, Grevesmühlen & Schönberg', plzFrom: '23936', plzTo: '23999', bundesland: 'Mecklenburg-Vorpommern', landkreis: 'Landkreis Nordwestmecklenburg' },
 
   // Landkreis Ludwigslust-Parchim (westlicher Teil)
   { id: 'ludwigslust-hagenow', name: 'Ludwigslust, Hagenow & Boizenburg', plzFrom: '19230', plzTo: '19300', bundesland: 'Mecklenburg-Vorpommern', landkreis: 'Landkreis Ludwigslust-Parchim' },
