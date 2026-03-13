@@ -9,6 +9,7 @@ interface LeadFilters {
   search?: string;
   bundesland?: string;
   branche?: string;
+  website_status?: string;
   missing_field?: string;
   regions?: string;
   sort_by?: string;
@@ -50,6 +51,13 @@ function buildFilterConditions(filters: LeadFilters) {
   if (filters.branche) {
     conditions.push(`l.branche = $${paramIndex}`);
     params.push(filters.branche);
+    paramIndex++;
+  }
+
+  if (filters.website_status) {
+    const statuses = filters.website_status.split(',');
+    conditions.push(`l.website_status = ANY($${paramIndex}::varchar[])`);
+    params.push(statuses);
     paramIndex++;
   }
 
