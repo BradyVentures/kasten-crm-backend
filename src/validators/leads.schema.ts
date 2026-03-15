@@ -18,6 +18,7 @@ export const createLeadSchema = z.object({
   assigned_to: z.string().uuid().nullable().optional(),
   branche: z.string().optional(),
   website_status: z.enum(['keine', 'veraltet', 'einfach', 'ok', 'unbekannt']).optional(),
+  website_checked: z.boolean().optional(),
 });
 
 export const updateLeadSchema = createLeadSchema.partial();
