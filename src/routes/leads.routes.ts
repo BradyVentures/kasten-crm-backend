@@ -19,6 +19,7 @@ router.patch('/:id/assign', leadsController.assign);
 router.post('/:id/convert', leadsController.convertToCustomer);
 router.get('/:id/activities', leadsController.getActivities);
 router.post('/:id/activities', leadsController.addActivity);
+router.delete('/:id/activities/:activityId', leadsController.deleteActivity);
 router.post('/import', leadsController.uploadMiddleware, leadsController.importExcel);
 router.post('/import/confirm', leadsController.confirmImport);
 router.post('/:id/lock', leadsController.acquireLock);

@@ -146,6 +146,16 @@ export async function addActivity(req: AuthRequest, res: Response) {
   }
 }
 
+export async function deleteActivity(req: AuthRequest, res: Response) {
+  try {
+    const result = await leadsService.deleteActivity(req.params.activityId, req.params.id);
+    if (!result) { res.status(404).json({ error: 'Aktivität nicht gefunden' }); return; }
+    res.json({ success: true });
+  } catch {
+    res.status(500).json({ error: 'Fehler beim Löschen der Aktivität' });
+  }
+}
+
 export async function importExcel(req: AuthRequest, res: Response) {
   try {
     if (!req.file) { res.status(400).json({ error: 'Keine Datei hochgeladen' }); return; }

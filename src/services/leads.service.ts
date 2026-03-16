@@ -282,6 +282,17 @@ export async function addActivity(leadId: string, userId: string, type: string, 
   return { success: true };
 }
 
+export async function deleteActivity(activityId: string, leadId: string) {
+  const result = await db.query(
+    'DELETE FROM lead_activities WHERE id = $1 AND lead_id = $2 RETURNING id',
+    [activityId, leadId]
+  );
+  if (result.rowCount === 0) {
+    return null;
+  }
+  return { success: true };
+}
+
 async function logActivity(leadId: string, userId: string, type: string, description: string, metadata?: Record<string, unknown>) {
   await db.query(
     `INSERT INTO lead_activities (lead_id, user_id, type, description, metadata)
