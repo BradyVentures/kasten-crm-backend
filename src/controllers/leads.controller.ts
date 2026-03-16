@@ -58,6 +58,16 @@ export async function getDistinctValues(req: AuthRequest, res: Response) {
   }
 }
 
+export async function deleteLead(req: AuthRequest, res: Response) {
+  try {
+    const deleted = await leadsService.deleteLead(req.params.id);
+    if (!deleted) { res.status(404).json({ error: 'Lead nicht gefunden' }); return; }
+    res.json({ success: true });
+  } catch {
+    res.status(500).json({ error: 'Fehler beim Löschen des Leads' });
+  }
+}
+
 export async function bulkDelete(req: AuthRequest, res: Response) {
   try {
     const parsed = bulkDeleteSchema.safeParse(req.body);

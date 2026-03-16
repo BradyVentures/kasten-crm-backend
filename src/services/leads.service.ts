@@ -142,6 +142,23 @@ export async function getRegionCounts(filters: Omit<LeadFilters, 'regions' | 'pa
   return counts;
 }
 
+export async function deleteLead(id: string) {
+  const client = await db.getClient();
+  try {
+    await client.query('BEGIN');
+    await client.query('DELETE FROM lead_locks WHERE lead_id = $1', [id]);
+    await client.query('DELETE FROM lead_activities WHERE lead_id = $1', [id]);
+    const result = await client.query('DELETE FROM leads WHERE id = $1', [id]);
+    await client.query('COMMIT');
+    return (result.rowCount || 0) > 0;
+  } catch (err) {
+    await client.query('ROLLBACK');
+    throw err;
+  } finally {
+    client.release();
+  }
+}
+
 export async function bulkDelete(ids: string[]) {
   if (ids.length === 0) return { deleted: 0 };
 

@@ -11,6 +11,7 @@ router.get('/distinct-values', leadsController.getDistinctValues);
 router.get('/region-counts', leadsController.getRegionCounts);
 router.get('/locks', leadsController.getAllLocks);
 router.delete('/bulk', leadsController.bulkDelete);
+router.delete('/:id', leadsController.deleteLead);
 router.get('/:id', leadsController.getById);
 router.post('/', leadsController.create);
 router.put('/:id', leadsController.update);
