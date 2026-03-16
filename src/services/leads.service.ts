@@ -204,7 +204,27 @@ export async function create(data: CreateLeadInput, userId: string) {
   return result.rows[0];
 }
 
-export async function update(id: string, data: UpdateLeadInput) {
+const FIELD_LABELS: Record<string, string> = {
+  company_name: 'Firmenname',
+  contact_person: 'Kontaktperson',
+  email: 'E-Mail',
+  phone: 'Telefon',
+  website: 'Website',
+  website_status: 'Website-Status',
+  website_checked: 'Website geprüft',
+  website_check_notes: 'Web Check',
+  address: 'Adresse',
+  city: 'Stadt',
+  postal_code: 'PLZ',
+  bundesland: 'Bundesland',
+  branche: 'Branche',
+  source: 'Quelle',
+  notes: 'Notizen',
+};
+
+export async function update(id: string, data: UpdateLeadInput, userId?: string) {
+  const current = userId ? await getById(id) : null;
+
   const fields: string[] = [];
   const params: unknown[] = [];
   let paramIndex = 1;
@@ -226,6 +246,24 @@ export async function update(id: string, data: UpdateLeadInput) {
     `UPDATE leads SET ${fields.join(', ')} WHERE id = $${paramIndex} RETURNING *`,
     params
   );
+
+  // Log changes as activity
+  if (userId && current && result.rows[0]) {
+    const changes: string[] = [];
+    for (const [key, value] of Object.entries(data)) {
+      if (value === undefined) continue;
+      const oldVal = (current as Record<string, unknown>)[key];
+      const newVal = value === '' ? null : value;
+      if (String(oldVal ?? '') !== String(newVal ?? '')) {
+        const label = FIELD_LABELS[key] || key;
+        changes.push(label);
+      }
+    }
+    if (changes.length > 0) {
+      await logActivity(id, userId, 'notiz', `Felder bearbeitet: ${changes.join(', ')}`);
+    }
+  }
+
   return result.rows[0] || null;
 }
 

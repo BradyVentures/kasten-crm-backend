@@ -94,7 +94,7 @@ export async function update(req: AuthRequest, res: Response) {
   try {
     const parsed = updateLeadSchema.safeParse(req.body);
     if (!parsed.success) { res.status(400).json({ error: parsed.error.errors[0].message }); return; }
-    const lead = await leadsService.update(req.params.id, parsed.data);
+    const lead = await leadsService.update(req.params.id, parsed.data, req.user!.id);
     if (!lead) { res.status(404).json({ error: 'Lead nicht gefunden' }); return; }
     res.json(lead);
   } catch {
