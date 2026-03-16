@@ -60,6 +60,16 @@ export async function assignService(req: AuthRequest, res: Response) {
   }
 }
 
+export async function deleteCustomer(req: AuthRequest, res: Response) {
+  try {
+    const deleted = await customersService.deleteCustomer(req.params.id);
+    if (!deleted) { res.status(404).json({ error: 'Kunde nicht gefunden' }); return; }
+    res.json({ success: true });
+  } catch {
+    res.status(500).json({ error: 'Fehler beim Löschen des Kunden' });
+  }
+}
+
 export async function removeService(req: AuthRequest, res: Response) {
   try {
     const result = await customersService.removeService(req.params.id, req.params.csId);

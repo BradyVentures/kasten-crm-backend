@@ -197,6 +197,27 @@ export async function assignService(customerId: string, data: {
   }
 }
 
+export async function deleteCustomer(id: string) {
+  const client = await db.getClient();
+  try {
+    await client.query('BEGIN');
+    await client.query('DELETE FROM customer_services WHERE customer_id = $1', [id]);
+    // If customer was converted from a lead, reset the lead status back
+    const customer = await client.query('SELECT lead_id FROM customers WHERE id = $1', [id]);
+    if (customer.rows[0]?.lead_id) {
+      await client.query(`UPDATE leads SET status = 'qualifiziert', updated_at = NOW() WHERE id = $1`, [customer.rows[0].lead_id]);
+    }
+    const result = await client.query('DELETE FROM customers WHERE id = $1', [id]);
+    await client.query('COMMIT');
+    return (result.rowCount || 0) > 0;
+  } catch (err) {
+    await client.query('ROLLBACK');
+    throw err;
+  } finally {
+    client.release();
+  }
+}
+
 export async function removeService(customerId: string, csId: string) {
   const result = await db.query(
     'DELETE FROM customer_services WHERE id = $1 AND customer_id = $2 RETURNING *',
