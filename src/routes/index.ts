@@ -10,6 +10,7 @@ import infoPagesRoutes from './info-pages.routes.js';
 import regionsRoutes from './regions.routes.js';
 import promotionsRoutes from './promotions.routes.js';
 import todosRoutes from './todos.routes.js';
+import emailTemplatesRoutes from './email-templates.routes.js';
 
 const router = Router();
 
@@ -24,5 +25,6 @@ router.use('/info-pages', infoPagesRoutes);
 router.use('/regions', regionsRoutes);
 router.use('/promotions', promotionsRoutes);
 router.use('/todos', todosRoutes);
+router.use('/email-templates', emailTemplatesRoutes);
 
 export default router;

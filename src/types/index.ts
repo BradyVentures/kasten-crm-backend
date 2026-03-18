@@ -113,6 +113,19 @@ export interface Todo {
   updated_at: Date;
 }
 
+export interface EmailTemplate {
+  id: string;
+  title: string;
+  subject: string;
+  body: string;
+  category: string;
+  sort_order: number;
+  created_by: string | null;
+  updated_by: string | null;
+  created_at: Date;
+  updated_at: Date;
+}
+
 export interface JwtPayload {
   id: string;
   email: string;
