@@ -16,7 +16,7 @@ export async function getAll(req: AuthRequest, res: Response) {
       search: req.query.search as string,
       bundesland: req.query.bundesland as string,
       branche: req.query.branche as string,
-      website_status: req.query.website_status as string,
+      website_rating: req.query.website_rating as string,
       phone_filter: req.query.phone_filter as string,
       missing_field: req.query.missing_field as string,
       regions: req.query.regions as string,
@@ -39,7 +39,7 @@ export async function getRegionCounts(req: AuthRequest, res: Response) {
       search: req.query.search as string,
       bundesland: req.query.bundesland as string,
       branche: req.query.branche as string,
-      website_status: req.query.website_status as string,
+      website_rating: req.query.website_rating as string,
       phone_filter: req.query.phone_filter as string,
       missing_field: req.query.missing_field as string,
     });

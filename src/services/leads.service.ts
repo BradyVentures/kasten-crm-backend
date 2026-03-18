@@ -9,7 +9,7 @@ interface LeadFilters {
   search?: string;
   bundesland?: string;
   branche?: string;
-  website_status?: string;
+  website_rating?: string;
   phone_filter?: string;
   missing_field?: string;
   regions?: string;
@@ -55,11 +55,13 @@ function buildFilterConditions(filters: LeadFilters) {
     paramIndex++;
   }
 
-  if (filters.website_status) {
-    const statuses = filters.website_status.split(',');
-    conditions.push(`l.website_status = ANY($${paramIndex}::varchar[])`);
-    params.push(statuses);
-    paramIndex++;
+  if (filters.website_rating) {
+    const ratings = filters.website_rating.split(',').map(Number).filter(n => n >= 1 && n <= 10);
+    if (ratings.length > 0) {
+      conditions.push(`l.website_rating = ANY($${paramIndex}::int[])`);
+      params.push(ratings);
+      paramIndex++;
+    }
   }
 
   // Phone filter: vorhanden / keine
@@ -104,7 +106,7 @@ export async function getAll(filters: LeadFilters) {
   const { conditions, params, paramIndex } = buildFilterConditions(filters);
 
   const where = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
-  const sortBy = ['company_name', 'status', 'created_at', 'updated_at', 'bundesland', 'city', 'branche', 'website_status', 'website_checked', 'contact_person', 'phone', 'postal_code'].includes(filters.sort_by || '')
+  const sortBy = ['company_name', 'status', 'created_at', 'updated_at', 'bundesland', 'city', 'branche', 'website_rating', 'website_checked', 'contact_person', 'phone', 'postal_code'].includes(filters.sort_by || '')
     ? `l.${filters.sort_by}` : 'l.created_at';
   const sortOrder = filters.sort_order === 'asc' ? 'ASC' : 'DESC';
   const page = Math.max(1, filters.page || 1);
@@ -208,13 +210,13 @@ export async function getById(id: string) {
 
 export async function create(data: CreateLeadInput, userId: string) {
   const result = await db.query(
-    `INSERT INTO leads (company_name, contact_person, email, phone, website, address, city, postal_code, bundesland, source, notes, assigned_to, created_by, branche, website_status)
+    `INSERT INTO leads (company_name, contact_person, email, phone, website, address, city, postal_code, bundesland, source, notes, assigned_to, created_by, branche, website_rating)
      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
      RETURNING *`,
     [data.company_name, data.contact_person || null, data.email || null, data.phone || null,
      data.website || null, data.address || null, data.city || null, data.postal_code || null,
      data.bundesland || null, data.source || null, data.notes || null, data.assigned_to || null, userId,
-     data.branche || null, data.website_status || null]
+     data.branche || null, data.website_rating || null]
   );
 
   await logActivity(result.rows[0].id, userId, 'erstellt', 'Lead erstellt');
@@ -227,7 +229,7 @@ const FIELD_LABELS: Record<string, string> = {
   email: 'E-Mail',
   phone: 'Telefon',
   website: 'Website',
-  website_status: 'Website-Status',
+  website_rating: 'Website-Rating',
   website_checked: 'Website geprüft',
   website_check_notes: 'Web Check',
   address: 'Adresse',

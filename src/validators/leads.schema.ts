@@ -17,7 +17,7 @@ export const createLeadSchema = z.object({
   notes: z.string().optional(),
   assigned_to: z.string().uuid().nullable().optional(),
   branche: z.string().optional(),
-  website_status: z.enum(['keine', 'veraltet', 'einfach', 'ok', 'unbekannt']).optional(),
+  website_rating: z.number().int().min(1).max(10).nullable().optional(),
   website_checked: z.boolean().optional(),
   website_check_notes: z.string().optional(),
 });
