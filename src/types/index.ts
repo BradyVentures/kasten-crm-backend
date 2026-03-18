@@ -97,6 +97,22 @@ export interface LeadLock {
   expires_at: Date;
 }
 
+export type TodoStatus = 'offen' | 'erledigt';
+
+export interface Todo {
+  id: string;
+  title: string;
+  description: string | null;
+  status: TodoStatus;
+  due_date: string | null;
+  customer_id: string | null;
+  customer_service_id: string | null;
+  assigned_to: string | null;
+  created_by: string;
+  created_at: Date;
+  updated_at: Date;
+}
+
 export interface JwtPayload {
   id: string;
   email: string;

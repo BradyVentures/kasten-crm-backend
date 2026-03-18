@@ -9,6 +9,7 @@ import documentsRoutes from './documents.routes.js';
 import infoPagesRoutes from './info-pages.routes.js';
 import regionsRoutes from './regions.routes.js';
 import promotionsRoutes from './promotions.routes.js';
+import todosRoutes from './todos.routes.js';
 
 const router = Router();
 
@@ -22,5 +23,6 @@ router.use('/documents', documentsRoutes);
 router.use('/info-pages', infoPagesRoutes);
 router.use('/regions', regionsRoutes);
 router.use('/promotions', promotionsRoutes);
+router.use('/todos', todosRoutes);
 
 export default router;
