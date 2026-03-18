@@ -5,7 +5,7 @@ import { createEmailTemplateSchema, updateEmailTemplateSchema } from '../validat
 
 export async function getAll(req: AuthRequest, res: Response) {
   try {
-    const templates = await emailTemplatesService.getAll();
+    const templates = await emailTemplatesService.getAll(req.user!.id);
     res.json(templates);
   } catch (err) {
     console.error('Error fetching email templates:', err);
@@ -15,7 +15,7 @@ export async function getAll(req: AuthRequest, res: Response) {
 
 export async function getCategories(req: AuthRequest, res: Response) {
   try {
-    const categories = await emailTemplatesService.getCategories();
+    const categories = await emailTemplatesService.getCategories(req.user!.id);
     res.json(categories);
   } catch (err) {
     console.error('Error fetching categories:', err);
@@ -58,7 +58,7 @@ export async function update(req: AuthRequest, res: Response) {
 
 export async function remove(req: AuthRequest, res: Response) {
   try {
-    await emailTemplatesService.remove(req.params.id);
+    await emailTemplatesService.remove(req.params.id, req.user!.id);
     res.json({ success: true });
   } catch (err) {
     console.error('Error deleting email template:', err);
