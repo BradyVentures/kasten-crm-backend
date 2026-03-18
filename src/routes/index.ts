@@ -11,9 +11,11 @@ import regionsRoutes from './regions.routes.js';
 import promotionsRoutes from './promotions.routes.js';
 import todosRoutes from './todos.routes.js';
 import emailTemplatesRoutes from './email-templates.routes.js';
+import publicRoutes from './public.routes.js';
 
 const router = Router();
 
+router.use('/public', publicRoutes);
 router.use('/auth', authRoutes);
 router.use('/leads', leadsRoutes);
 router.use('/customers', customersRoutes);
