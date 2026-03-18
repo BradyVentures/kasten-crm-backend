@@ -111,6 +111,23 @@ router.post('/contact', async (req: Request, res: Response) => {
       });
     }
 
+    // Auto-create Todo for Website-Check
+    if (isCheck) {
+      try {
+        await db.query(
+          `INSERT INTO todos (title, description, assigned_to, created_by)
+           VALUES ($1, $2, $3, $3)`,
+          [
+            `WebCheck: ${name}`,
+            `Website: ${website || '(nicht angegeben)'}\nE-Mail: ${email}\n\nAutomatisch erstellt via brady-digital.com`,
+            ADMIN_USER_ID,
+          ]
+        );
+      } catch (todoErr) {
+        console.error('Auto-todo creation failed:', todoErr);
+      }
+    }
+
     res.json({ success: true, message: 'Anfrage erfolgreich gesendet!' });
   } catch (err) {
     console.error('Contact form error:', err);
