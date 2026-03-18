@@ -1,6 +1,5 @@
 import { Router, Request, Response } from 'express';
 import { db } from '../config/database.js';
-import { Resend } from 'resend';
 
 const router = Router();
 const ADMIN_USER_ID = '9ec85bc9-3f6a-4cc1-89f8-e911c32530f8';
@@ -76,32 +75,39 @@ router.post('/contact', async (req: Request, res: Response) => {
       [leadId, ADMIN_USER_ID, `Lead erstellt via ${source} (brady-digital.com)`]
     );
 
-    // Send notification email
-    if (process.env.RESEND_API_KEY) {
-      const resend = new Resend(process.env.RESEND_API_KEY);
+    // Send notification email via Brevo
+    if (process.env.BREVO_API_KEY) {
       const subject = isCheck
         ? `Website-Check Anfrage von ${name}`
         : `Kontaktanfrage von ${name}`;
 
-      const emailBody = isCheck
+      const htmlContent = isCheck
         ? `<h2>Neue Website-Check Anfrage</h2>
            <p><strong>Name:</strong> ${name}</p>
            <p><strong>E-Mail:</strong> ${email}</p>
            <p><strong>Website:</strong> ${website || '(nicht angegeben)'}</p>
-           <br><p><a href="https://salestool.brady-digital.com/leads/${leadId}">Im SalesTool öffnen</a></p>`
+           <br><p><a href="https://sales.brady-digital.com/leads/${leadId}">Im SalesTool öffnen</a></p>`
         : `<h2>Neue Kontaktanfrage</h2>
            <p><strong>Name:</strong> ${name}</p>
            <p><strong>E-Mail:</strong> ${email}</p>
            <p><strong>Unternehmen:</strong> ${company || '(nicht angegeben)'}</p>
            <p><strong>Nachricht:</strong></p>
            <p>${(message || '').replace(/\n/g, '<br>')}</p>
-           <br><p><a href="https://salestool.brady-digital.com/leads/${leadId}">Im SalesTool öffnen</a></p>`;
+           <br><p><a href="https://sales.brady-digital.com/leads/${leadId}">Im SalesTool öffnen</a></p>`;
 
-      await resend.emails.send({
-        from: 'Brady Digital <noreply@brady-digital.com>',
-        to: ['hallo@brady-digital.com'],
-        subject,
-        html: emailBody,
+      await fetch('https://api.brevo.com/v3/smtp/email', {
+        method: 'POST',
+        headers: {
+          'accept': 'application/json',
+          'content-type': 'application/json',
+          'api-key': process.env.BREVO_API_KEY,
+        },
+        body: JSON.stringify({
+          sender: { name: 'Brady Digital', email: 'noreply@brady-digital.com' },
+          to: [{ email: 'hallo@brady-digital.com', name: 'Brady Digital' }],
+          subject,
+          htmlContent,
+        }),
       });
     }
 
