@@ -109,6 +109,7 @@ export async function createFromTemplate(req: AuthRequest, res: Response) {
       res.status(404).json({ error: err.message });
       return;
     }
+    console.error('Error creating from template:', err);
     res.status(500).json({ error: 'Fehler beim Erstellen aus Template' });
   }
 }

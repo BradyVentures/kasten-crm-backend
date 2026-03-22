@@ -15,13 +15,13 @@ export async function create(projectId: string, data: {
   name: string;
   category: string;
   description?: string;
-  internal_cost?: number;
-  external_cost?: number;
-  price?: number;
-  hourly_rate?: number;
+  setup_cost_internal?: number;
+  setup_price_customer?: number;
+  monthly_cost_internal?: number;
+  monthly_price_customer?: number;
   estimated_hours?: number;
   complexity?: string;
-  phase?: string;
+  phase?: number;
   estimated_weeks?: number;
   tech_stack?: string;
   dependencies?: string;
@@ -30,7 +30,7 @@ export async function create(projectId: string, data: {
   sort_order?: number;
 }) {
   const result = await db.query(
-    `INSERT INTO project_modules (project_id, name, category, description, internal_cost, external_cost, price, hourly_rate, estimated_hours, complexity, phase, estimated_weeks, tech_stack, dependencies, risks, dsgvo_notes, sort_order)
+    `INSERT INTO project_modules (project_id, name, category, description, setup_cost_internal, setup_price_customer, monthly_cost_internal, monthly_price_customer, estimated_hours, complexity, phase, estimated_weeks, tech_stack, dependencies, risks, dsgvo_notes, sort_order)
      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)
      RETURNING *`,
     [
@@ -38,13 +38,13 @@ export async function create(projectId: string, data: {
       data.name,
       data.category,
       data.description || null,
-      data.internal_cost ?? null,
-      data.external_cost ?? null,
-      data.price ?? null,
-      data.hourly_rate ?? null,
+      data.setup_cost_internal ?? 0,
+      data.setup_price_customer ?? 0,
+      data.monthly_cost_internal ?? 0,
+      data.monthly_price_customer ?? 0,
       data.estimated_hours ?? null,
-      data.complexity || null,
-      data.phase || null,
+      data.complexity || 'mittel',
+      data.phase ?? 1,
       data.estimated_weeks ?? null,
       data.tech_stack || null,
       data.dependencies || null,
@@ -59,7 +59,6 @@ export async function create(projectId: string, data: {
 }
 
 export async function update(moduleId: string, data: Record<string, unknown>) {
-  // Get project_id for recalculation
   const moduleResult = await db.query('SELECT project_id FROM project_modules WHERE id = $1', [moduleId]);
   if (moduleResult.rows.length === 0) return null;
   const projectId = moduleResult.rows[0].project_id;
@@ -94,7 +93,6 @@ export async function update(moduleId: string, data: Record<string, unknown>) {
 }
 
 export async function remove(moduleId: string) {
-  // Get project_id for recalculation
   const moduleResult = await db.query('SELECT project_id FROM project_modules WHERE id = $1', [moduleId]);
   if (moduleResult.rows.length === 0) return false;
   const projectId = moduleResult.rows[0].project_id;
@@ -109,7 +107,7 @@ export async function remove(moduleId: string) {
   return deleted;
 }
 
-export async function reorder(projectId: string, items: { id: string; sort_order: number; phase?: string }[]) {
+export async function reorder(projectId: string, items: { id: string; sort_order: number; phase?: number }[]) {
   for (const item of items) {
     if (item.phase !== undefined) {
       await db.query(

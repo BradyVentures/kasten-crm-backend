@@ -223,9 +223,10 @@ export async function remove(id: string) {
 export async function recalculate(id: string) {
   const result = await db.query(
     `UPDATE projects SET
-       total_internal_cost = COALESCE((SELECT SUM(COALESCE(internal_cost, 0)) FROM project_modules WHERE project_id = $1), 0),
-       total_external_cost = COALESCE((SELECT SUM(COALESCE(external_cost, 0)) FROM project_modules WHERE project_id = $1), 0),
-       total_price = COALESCE((SELECT SUM(COALESCE(price, 0)) FROM project_modules WHERE project_id = $1), 0),
+       total_setup_cost_internal = COALESCE((SELECT SUM(COALESCE(setup_cost_internal, 0)) FROM project_modules WHERE project_id = $1), 0),
+       total_setup_price_customer = COALESCE((SELECT SUM(COALESCE(setup_price_customer, 0)) FROM project_modules WHERE project_id = $1), 0),
+       total_monthly_cost_internal = COALESCE((SELECT SUM(COALESCE(monthly_cost_internal, 0)) FROM project_modules WHERE project_id = $1), 0),
+       total_monthly_price_customer = COALESCE((SELECT SUM(COALESCE(monthly_price_customer, 0)) FROM project_modules WHERE project_id = $1), 0),
        updated_at = NOW()
      WHERE id = $1
      RETURNING *`,
