@@ -25,16 +25,16 @@ const activityTypeEnum = z.enum([
 
 export const createProjectSchema = z.object({
   title: z.string().min(1, 'Titel erforderlich'),
-  customer_id: z.string().uuid().optional().or(z.literal('')),
-  prospect_name: z.string().optional(),
-  prospect_contact: z.string().optional(),
-  prospect_email: z.string().email().optional().or(z.literal('')),
-  prospect_phone: z.string().optional(),
-  description: z.string().optional(),
+  customer_id: z.string().uuid().nullable().optional().or(z.literal('')),
+  prospect_name: z.string().nullable().optional(),
+  prospect_contact: z.string().nullable().optional(),
+  prospect_email: z.string().email().nullable().optional().or(z.literal('')),
+  prospect_phone: z.string().nullable().optional(),
+  description: z.string().nullable().optional(),
   status: projectStatusEnum.optional(),
-  estimated_start: z.string().optional(),
-  estimated_end: z.string().optional(),
-  assigned_to: z.string().uuid().optional().or(z.literal('')),
+  estimated_start: z.string().nullable().optional(),
+  estimated_end: z.string().nullable().optional(),
+  assigned_to: z.string().uuid().nullable().optional().or(z.literal('')),
 });
 
 export const updateProjectSchema = z.object({
