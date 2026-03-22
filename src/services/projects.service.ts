@@ -255,36 +255,37 @@ export async function createFromTemplate(templateId: string, data: {
 
   // Create project
   const project = await create(data, userId);
+  const template = templateResult.rows[0];
 
-  // Get template modules
-  const modulesResult = await db.query(
-    'SELECT * FROM project_template_modules WHERE template_id = $1 ORDER BY phase ASC NULLS LAST, sort_order ASC',
-    [templateId]
-  );
+  // Parse modules from JSONB
+  const modules = typeof template.modules_json === 'string'
+    ? JSON.parse(template.modules_json)
+    : template.modules_json || [];
 
   // Insert modules
-  for (const mod of modulesResult.rows) {
+  for (let i = 0; i < modules.length; i++) {
+    const mod = modules[i];
     await db.query(
-      `INSERT INTO project_modules (project_id, name, category, description, internal_cost, external_cost, price, hourly_rate, estimated_hours, complexity, phase, estimated_weeks, tech_stack, dependencies, risks, dsgvo_notes, sort_order)
+      `INSERT INTO project_modules (project_id, name, category, description, setup_cost_internal, setup_price_customer, monthly_cost_internal, monthly_price_customer, estimated_hours, complexity, phase, estimated_weeks, tech_stack, dependencies, risks, dsgvo_notes, sort_order)
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)`,
       [
         project.id,
         mod.name,
         mod.category,
-        mod.description,
-        mod.internal_cost,
-        mod.external_cost,
-        mod.price,
-        mod.hourly_rate,
-        mod.estimated_hours,
-        mod.complexity,
-        mod.phase,
-        mod.estimated_weeks,
-        mod.tech_stack,
-        mod.dependencies,
-        mod.risks,
-        mod.dsgvo_notes,
-        mod.sort_order,
+        mod.description || null,
+        mod.setup_cost_internal ?? 0,
+        mod.setup_price_customer ?? 0,
+        mod.monthly_cost_internal ?? 0,
+        mod.monthly_price_customer ?? 0,
+        mod.estimated_hours ?? null,
+        mod.complexity || 'mittel',
+        mod.phase ?? (i + 1),
+        mod.estimated_weeks ?? null,
+        mod.tech_stack || null,
+        mod.dependencies || null,
+        mod.risks || null,
+        mod.dsgvo_notes || null,
+        i,
       ]
     );
   }
