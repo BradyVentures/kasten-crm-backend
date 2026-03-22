@@ -11,6 +11,8 @@ import regionsRoutes from './regions.routes.js';
 import promotionsRoutes from './promotions.routes.js';
 import todosRoutes from './todos.routes.js';
 import emailTemplatesRoutes from './email-templates.routes.js';
+import projectsRoutes from './projects.routes.js';
+import projectTemplatesRoutes from './project-templates.routes.js';
 import publicRoutes from './public.routes.js';
 
 const router = Router();
@@ -28,5 +30,7 @@ router.use('/regions', regionsRoutes);
 router.use('/promotions', promotionsRoutes);
 router.use('/todos', todosRoutes);
 router.use('/email-templates', emailTemplatesRoutes);
+router.use('/projects', projectsRoutes);
+router.use('/project-templates', projectTemplatesRoutes);
 
 export default router;
