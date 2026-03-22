@@ -19,9 +19,9 @@ router.get('/', async (req: AuthRequest, res: Response) => {
 
 router.post('/', async (req: AuthRequest, res: Response) => {
   try {
-    const { name, description, default_modules } = req.body;
+    const { name, description, modules_json } = req.body;
     if (!name) { res.status(400).json({ error: 'Name erforderlich' }); return; }
-    const template = await templatesService.create({ name, description, default_modules }, req.user!.id);
+    const template = await templatesService.create({ name, description, modules_json }, req.user!.id);
     res.status(201).json(template);
   } catch {
     res.status(500).json({ error: 'Fehler beim Erstellen des Templates' });

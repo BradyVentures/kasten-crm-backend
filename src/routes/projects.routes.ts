@@ -6,15 +6,17 @@ const router = Router();
 
 router.use(authenticate);
 
-// Projects
+// Projects — STATIC routes BEFORE parameterized routes
 router.get('/', projectsController.getAll);
 router.post('/', projectsController.create);
+router.post('/from-template/:templateId', projectsController.createFromTemplate);
+
+// Projects — parameterized routes
 router.get('/:id', projectsController.getById);
 router.put('/:id', projectsController.update);
 router.patch('/:id/status', projectsController.updateStatus);
 router.delete('/:id', projectsController.remove);
 router.post('/:id/recalculate', projectsController.recalculate);
-router.post('/from-template/:templateId', projectsController.createFromTemplate);
 
 // Modules
 router.get('/:id/modules', projectsController.getModules);
