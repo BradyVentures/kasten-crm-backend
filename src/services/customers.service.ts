@@ -178,10 +178,10 @@ export async function assignService(customerId: string, data: {
     }
 
     const result = await client.query(
-      `INSERT INTO customer_services (customer_id, service_id, sold_price, price_model, contract_months, sold_date, sold_by, notes, promotion_id, original_price, discount_amount)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+      `INSERT INTO customer_services (customer_id, service_id, sold_price, setup_price, price_model, contract_months, sold_date, sold_by, notes, promotion_id, original_price, discount_amount)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
        RETURNING *`,
-      [customerId, data.service_id, finalPrice, data.price_model,
+      [customerId, data.service_id, finalPrice, data.setup_price || 0, data.price_model,
        data.contract_months || null,
        data.sold_date || new Date().toISOString().split('T')[0], userId, data.notes || null,
        promotionId, originalPrice, discountAmount]

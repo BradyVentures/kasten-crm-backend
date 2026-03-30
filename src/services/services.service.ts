@@ -14,6 +14,7 @@ export async function create(data: {
   description?: string;
   includes?: string;
   base_price: number;
+  setup_price?: number;
   price_model: string;
   type: string;
   category?: string;
@@ -21,10 +22,10 @@ export async function create(data: {
   commission_rate?: number;
 }) {
   const result = await db.query(
-    `INSERT INTO services (name, short_description, description, includes, base_price, price_model, type, category, sort_order, commission_rate)
-     VALUES ($1, $2, $3, $4, $5, $6, $7::service_type, $8, $9, $10)
+    `INSERT INTO services (name, short_description, description, includes, base_price, setup_price, price_model, type, category, sort_order, commission_rate)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8::service_type, $9, $10, $11)
      RETURNING *`,
-    [data.name, data.short_description || null, data.description || null, data.includes || null, data.base_price, data.price_model, data.type, data.category || null, data.sort_order || 0, data.commission_rate || 0]
+    [data.name, data.short_description || null, data.description || null, data.includes || null, data.base_price, data.setup_price || 0, data.price_model, data.type, data.category || null, data.sort_order || 0, data.commission_rate || 0]
   );
   return result.rows[0];
 }
