@@ -6,6 +6,7 @@ export const createServiceSchema = z.object({
   description: z.string().optional(),
   includes: z.string().optional(),
   base_price: z.number().min(0),
+  setup_price: z.number().min(0).optional(),
   price_model: z.enum(['einmalig', 'monatlich']),
   type: z.enum(['paket', 'addon']),
   category: z.string().optional(),
