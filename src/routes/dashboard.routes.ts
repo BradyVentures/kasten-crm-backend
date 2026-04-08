@@ -7,7 +7,6 @@ const router = Router();
 router.use(authenticate);
 
 router.get('/stats', dashboardController.getStats);
-router.get('/commissions', dashboardController.getCommissions);
-router.get('/recent-activity', dashboardController.getRecentActivity);
+router.get('/recent-offers', dashboardController.getRecentOffers);
 
 export default router;

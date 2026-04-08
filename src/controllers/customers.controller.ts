@@ -1,7 +1,7 @@
 import { Response } from 'express';
 import { AuthRequest } from '../types/index.js';
 import * as customersService from '../services/customers.service.js';
-import { createCustomerSchema, updateCustomerSchema, assignServiceSchema } from '../validators/customers.schema.js';
+import { createCustomerSchema, updateCustomerSchema } from '../validators/customers.schema.js';
 
 export async function create(req: AuthRequest, res: Response) {
   try {
@@ -49,33 +49,12 @@ export async function update(req: AuthRequest, res: Response) {
   }
 }
 
-export async function assignService(req: AuthRequest, res: Response) {
-  try {
-    const parsed = assignServiceSchema.safeParse(req.body);
-    if (!parsed.success) { res.status(400).json({ error: parsed.error.errors[0].message }); return; }
-    const result = await customersService.assignService(req.params.id, parsed.data, req.user!.id);
-    res.status(201).json(result);
-  } catch {
-    res.status(500).json({ error: 'Fehler beim Zuweisen des Service' });
-  }
-}
-
 export async function deleteCustomer(req: AuthRequest, res: Response) {
   try {
     const deleted = await customersService.deleteCustomer(req.params.id);
     if (!deleted) { res.status(404).json({ error: 'Kunde nicht gefunden' }); return; }
     res.json({ success: true });
   } catch {
-    res.status(500).json({ error: 'Fehler beim Löschen des Kunden' });
-  }
-}
-
-export async function removeService(req: AuthRequest, res: Response) {
-  try {
-    const result = await customersService.removeService(req.params.id, req.params.csId);
-    if (!result) { res.status(404).json({ error: 'Service-Zuweisung nicht gefunden' }); return; }
-    res.json({ success: true });
-  } catch {
-    res.status(500).json({ error: 'Fehler beim Entfernen des Service' });
+    res.status(500).json({ error: 'Fehler beim Loeschen des Kunden' });
   }
 }

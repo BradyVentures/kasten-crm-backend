@@ -1,36 +1,26 @@
 import { Router } from 'express';
 import authRoutes from './auth.routes.js';
-import leadsRoutes from './leads.routes.js';
 import customersRoutes from './customers.routes.js';
-import servicesRoutes from './services.routes.js';
 import usersRoutes from './users.routes.js';
 import dashboardRoutes from './dashboard.routes.js';
-import documentsRoutes from './documents.routes.js';
-import infoPagesRoutes from './info-pages.routes.js';
-import regionsRoutes from './regions.routes.js';
-import promotionsRoutes from './promotions.routes.js';
 import todosRoutes from './todos.routes.js';
-import emailTemplatesRoutes from './email-templates.routes.js';
+import productsRoutes from './products.routes.js';
+import offersRoutes from './offers.routes.js';
+import importRoutes from './import.routes.js';
 import projectsRoutes from './projects.routes.js';
-import projectTemplatesRoutes from './project-templates.routes.js';
-import publicRoutes from './public.routes.js';
+import savedItemsRoutes from './saved-items.routes.js';
 
 const router = Router();
 
-router.use('/public', publicRoutes);
 router.use('/auth', authRoutes);
-router.use('/leads', leadsRoutes);
 router.use('/customers', customersRoutes);
-router.use('/services', servicesRoutes);
 router.use('/users', usersRoutes);
 router.use('/dashboard', dashboardRoutes);
-router.use('/documents', documentsRoutes);
-router.use('/info-pages', infoPagesRoutes);
-router.use('/regions', regionsRoutes);
-router.use('/promotions', promotionsRoutes);
 router.use('/todos', todosRoutes);
-router.use('/email-templates', emailTemplatesRoutes);
+router.use('/products', productsRoutes);
+router.use('/offers', offersRoutes);
+router.use('/import', importRoutes);
 router.use('/projects', projectsRoutes);
-router.use('/project-templates', projectTemplatesRoutes);
+router.use('/saved-items', savedItemsRoutes);
 
 export default router;

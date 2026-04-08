@@ -1,7 +1,7 @@
 import { Response } from 'express';
 import { AuthRequest } from '../types/index.js';
 import * as usersService from '../services/users.service.js';
-import { createUserSchema, updateUserSchema, resetPasswordSchema } from '../validators/services.schema.js';
+import { createUserSchema, updateUserSchema, resetPasswordSchema } from '../validators/users.schema.js';
 
 export async function getAll(_req: AuthRequest, res: Response) {
   try {

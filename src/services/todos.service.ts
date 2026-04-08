@@ -28,13 +28,12 @@ export async function getAll(filters: { status?: string; assigned_to?: string; c
   const result = await db.query(
     `SELECT t.*,
             c.company_name as customer_name,
-            s.name as service_name,
+            o.offer_number,
             ua.name as assigned_to_name,
             uc.name as created_by_name
      FROM todos t
      LEFT JOIN customers c ON t.customer_id = c.id
-     LEFT JOIN customer_services cs ON t.customer_service_id = cs.id
-     LEFT JOIN services s ON cs.service_id = s.id
+     LEFT JOIN offers o ON t.offer_id = o.id
      LEFT JOIN users ua ON t.assigned_to = ua.id
      LEFT JOIN users uc ON t.created_by = uc.id
      ${where}
@@ -53,11 +52,11 @@ export async function create(data: {
   description?: string;
   due_date?: string;
   customer_id?: string;
-  customer_service_id?: string;
+  offer_id?: string;
   assigned_to?: string;
 }, userId: string) {
   const result = await db.query(
-    `INSERT INTO todos (title, description, due_date, customer_id, customer_service_id, assigned_to, created_by)
+    `INSERT INTO todos (title, description, due_date, customer_id, offer_id, assigned_to, created_by)
      VALUES ($1, $2, $3, $4, $5, $6, $7)
      RETURNING *`,
     [
@@ -65,7 +64,7 @@ export async function create(data: {
       data.description || null,
       data.due_date || null,
       data.customer_id || null,
-      data.customer_service_id || null,
+      data.offer_id || null,
       data.assigned_to || null,
       userId,
     ]

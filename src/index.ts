@@ -21,5 +21,5 @@ app.use('/api/v1', routes);
 app.use(errorHandler);
 
 app.listen(env.port, () => {
-  console.log(`Brady SalesTool Backend running on port ${env.port}`);
+  console.log(`Bauelemente Kasten CRM Backend running on port ${env.port}`);
 });

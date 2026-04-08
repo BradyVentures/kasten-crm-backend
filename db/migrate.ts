@@ -10,7 +10,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 async function migrate() {
   const pool = new pg.Pool({
-    connectionString: process.env.DATABASE_URL || 'postgresql://postgres:postgres@localhost:5432/brady_salestool',
+    connectionString: process.env.DATABASE_URL || 'postgresql://postgres:postgres@localhost:5432/bauelemente_kasten',
   });
 
   try {
