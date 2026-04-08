@@ -27,9 +27,9 @@ export async function login(email: string, password: string) {
     role: user.role,
   };
 
-  const token = jwt.sign(payload, env.jwtSecret, {
-    expiresIn: env.jwtExpiresIn,
-  });
+  const token = jwt.sign(payload, env.jwtSecret as jwt.Secret, {
+    expiresIn: env.jwtExpiresIn as string,
+  } as jwt.SignOptions);
 
   return {
     token,
