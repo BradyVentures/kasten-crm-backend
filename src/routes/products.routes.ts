@@ -25,6 +25,7 @@ router.get('/categories/:slug/calculate', productsController.calculatePrice);
 // Admin routes
 router.post('/categories', adminOnly, productsController.createCategory);
 router.put('/categories/:id', adminOnly, productsController.updateCategory);
+router.delete('/categories/:id', adminOnly, productsController.deleteCategory);
 router.post('/attributes', adminOnly, productsController.createAttribute);
 router.put('/attributes/:id', adminOnly, productsController.updateAttribute);
 router.delete('/attributes/:id', adminOnly, productsController.deleteAttribute);

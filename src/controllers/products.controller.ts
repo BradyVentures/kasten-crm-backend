@@ -57,6 +57,15 @@ export async function updateCategory(req: AuthRequest, res: Response) {
   }
 }
 
+export async function deleteCategory(req: AuthRequest, res: Response) {
+  try {
+    await productsService.deleteCategory(req.params.id);
+    res.json({ message: 'Kategorie gelöscht' });
+  } catch {
+    res.status(500).json({ error: 'Fehler beim Löschen der Kategorie' });
+  }
+}
+
 export async function createAttribute(req: AuthRequest, res: Response) {
   try {
     const attr = await productsService.createAttribute(req.body);

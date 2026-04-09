@@ -197,6 +197,17 @@ export async function updateCategory(id: string, data: Record<string, unknown>) 
   return result.rows[0] || null;
 }
 
+export async function deleteCategory(id: string) {
+  // Cascade: delete pricing rules, attribute options, attributes, then category
+  await db.query('DELETE FROM pricing_rules WHERE category_id = $1', [id]);
+  await db.query(`
+    DELETE FROM product_attribute_options WHERE attribute_id IN
+    (SELECT id FROM product_attributes WHERE category_id = $1)
+  `, [id]);
+  await db.query('DELETE FROM product_attributes WHERE category_id = $1', [id]);
+  await db.query('DELETE FROM product_categories WHERE id = $1', [id]);
+}
+
 export async function createAttribute(data: { category_id: string; slug: string; label: string; attribute_type: string; unit?: string; is_required?: boolean; sort_order?: number }) {
   const result = await db.query(
     'INSERT INTO product_attributes (category_id, slug, label, attribute_type, unit, is_required, sort_order) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *',
