@@ -283,14 +283,44 @@ export async function createFromVisualizer(data: {
   const adminResult = await db.query("SELECT id FROM users WHERE role = 'admin' LIMIT 1");
   const adminId = adminResult.rows[0]?.id || null;
 
+  // Kunde anlegen oder bestehenden finden (per E-Mail)
+  let customerId: string | null = null;
+  try {
+    const existingCustomer = await db.query(
+      'SELECT id FROM customers WHERE email = $1 LIMIT 1',
+      [data.customer_email]
+    );
+    if (existingCustomer.rows[0]) {
+      customerId = existingCustomer.rows[0].id;
+    } else {
+      const newCustomer = await db.query(
+        `INSERT INTO customers (company_name, contact_person, email, phone, notes, created_by)
+         VALUES ($1, $2, $3, $4, $5, $6) RETURNING id`,
+        [
+          data.customer_name,
+          data.customer_name,
+          data.customer_email,
+          data.customer_phone || null,
+          'Automatisch erstellt über Produktvorschau',
+          adminId,
+        ]
+      );
+      customerId = newCustomer.rows[0].id;
+      console.log('Customer created from visualizer:', customerId);
+    }
+  } catch (err) {
+    console.error('Customer creation failed:', err);
+  }
+
   const offerNumberResult = await db.query('SELECT next_offer_number() as num');
   const offerNumber = offerNumberResult.rows[0].num;
 
   const offerResult = await db.query(
-    `INSERT INTO offers (offer_number, customer_name, customer_email, customer_phone, notes, visualizer_image_url, visualizer_request_id, created_by)
-     VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`,
+    `INSERT INTO offers (offer_number, customer_id, customer_name, customer_email, customer_phone, notes, visualizer_image_url, visualizer_request_id, created_by)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *`,
     [
       offerNumber,
+      customerId,
       data.customer_name,
       data.customer_email,
       data.customer_phone || null,
